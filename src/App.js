@@ -8,7 +8,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-         Lets improve our GIT/Github skill 
+        This is a Unicorn branch 
         </p>
             </header>
     </div>
