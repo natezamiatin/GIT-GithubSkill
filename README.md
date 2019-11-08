@@ -1,68 +1,155 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Terminal Cheat Sheet
 
-## Available Scripts
+pwd # print working directory
+ls # list files in directory
+cd # change directory
+~ # home directory
+.. # up one directory
 
-In the project directory, you can run:
+-           # previous working directory
+  help # get help
+  -h # get help
+  --help # get help
+  man # manual
+  cat # output the contents of a file
+  mkdir # create new directory
+  open # open a file with the associated program, a directory with Finder, or a URL with the default web browser
+  ps # list all running processes
+  kill # terminate existing process
+  rmd # permanently delete file
+  rmdir # remove directory
 
-### `yarn start`
+## Working with Git
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Quick Start
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+git clone <url> # Clone directory
+git checkout -b <new-branch> # Create new local branch
+git push -u origin <new-branch> # Sync local branch with remote
+git checkout <branch> # Checkout branch
+git push origin <branch> # Push branch to remote
 
-### `yarn test`
+git branch -d <branchname> # deletes local branch
+git push origin :<branchname> # deletes remote branch
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+git subtree push --prefix docs origin gh-pages # push docs as subtree to gh-pages
 
-### `yarn build`
+### Clone Directory
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+git clone <url>
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+### Create Project
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+cd project/
+git init # initializes the repository
+git add . # add those 'unknown' files
+git commit # commit all changes, edit changelog entry
+git rm --cached <file>... # ridiculously complicated command to undo, in case you forgot .gitignore
 
-### `yarn eject`
+### Branching and Merging
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+git branch # show list of all branches (\* is active)
+git checkout -b linux-work # create a new branch named "linux-work"
+<make changes>
+git commit -a
+git checkout master # go back to master branch
+git merge linux-work # merge changesets from linux-work (Git >= 1.5)
+git pull . linux-work # merge changesets from linux-work (all Git versions)
+git branch -m <oldname> <newname> # rename branch
+git branch -m <newname> # rename current branch
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Delete Project
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+git branch -d <branchname> # deletes local branch
+git push origin :<branchname> # deletes remote branch
+git remote prune <branchname> # update local/remote sync
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Merging Upstream
 
-## Learn More
+git remote -v # Get list of remote branches
+git remote add upstream <upstream github url> # Add original as upstream
+git remote -v # Check upstream
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+git fetch upstream # Get original repo
+git checkout development # Switch to main branch in local fork
+git merge upstream/development # Merge original with fork
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+git diff --name-only | uniq | xargs subl # Fix conflicts in Sublime Text
 
-### Code Splitting
+### Importing Patches
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+git apply < ../p/foo.patch
+git commit -a
 
-### Analyzing the Bundle Size
+### Exporting Patches
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+<make changes>
+git commit -a -m "commit message"
+git format-patch HEAD^  # creates 0001-commit-message.txt
+                        # (HEAD^ means every patch since one revision before the
+                        # tip of the branch, also known as HEAD)
 
-### Making a Progressive Web App
+### Inspecting Revisions
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+# inspect history visually
 
-### Advanced Configuration
+gitk # this opens a Tk window, and shows you how the revisions are connected
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+# inspect history
 
-### Deployment
+git log # this pipes a log of the current branch into your PAGER
+git log -p # ditto, but append a patch after each commit message
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+# inspect a specific commit
 
-### `yarn build` fails to minify
+git show HEAD # show commit info, diffstat and patch # of the tip of the current branch
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+### Referring to Revisions
+
+# by name
+
+git log v1.0.0 # show history leading up to tag "v1.0.0"
+git log master # show history of branch "master"
+
+# relative to a name
+
+git show master^ # show parent to last revision of master
+git show master~2 # show grand parent to tip of master
+git show master~3 # show great grand parent to tip of master (you get the idea)
+
+# by output of "git describe"
+
+git show v1.4.4-g730996f # you get this string by calling "git describe"
+
+# by hash (internally, all objects are identified by a hash)
+
+git show f665776185ad074b236c00751d666da7d1977dbe
+git show f665776 # a unique prefix is sufficient
+
+# tag a revision
+
+git tag v1.0.0 # make current HEAD known as "v1.0.0"
+git tag interesting v1.4.4-g730996f # tag a specific revision (not HEAD)
+
+### Comparing Revisions
+
+# diff between two branches
+
+git diff origin..master # pipes a diff into PAGER
+git diff origin..master > my.patch # pipes a diff into my.patch
+
+# get diffstat of uncommitted work
+
+git diff --stat HEAD
+
+## Sublime as default text editor
+
+cd ~
+mkdir bin
+ln -s "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" ~/bin/subl
+git config --global core.editor "subl -n -w"
+
+### If that's not working
+
+sudo rm -rf /usr/local/bin/subl
+sudo ln -s /Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl /usr/local/bin

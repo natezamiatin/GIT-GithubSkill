@@ -31,7 +31,15 @@ function App() {
               Fork its a clone whole a repo and added to your account 
               Pull request mean send your changes to the main repo 
 
+
+
             </h1>
+
+            <h2>
+
+            when we try to push on GitHub branch and its doesn't work use this command 
+            git push --all -u
+            </h2>
     </div>
   );
 }
